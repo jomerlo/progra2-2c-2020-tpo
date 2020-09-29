@@ -1,0 +1,58 @@
+package misAlgoritmos;
+
+import miApi.ICola;
+import miApi.IColaCadena;
+import miApi.IPila;
+import miApi.ITabla;
+
+public class Helpers {
+	
+	public void ColaPila(ICola colaOrigen,IPila pilaDestino) {
+		while(!colaOrigen.colaVacia()) {
+			pilaDestino.apilar(colaOrigen.primero());
+			colaOrigen.desacolar();
+		}
+	}
+	
+	public void tablasAcolas(ICola cola_resultado,IColaCadena movimientos,ITabla proveedores,ITabla peliculas) {
+		int persona = 0;
+		int pelicula = 0;
+		int proveedor = 0;
+		
+		while(!movimientos.colaVacia()) {
+			/*Descomponer las celdas de cada movimiento en persona/pelicula/proveedor*/
+			String[] datos = movimientos.primero().split(";");
+			persona=Integer.parseInt(datos[0]);
+			/*Obtener codigo de proveedor*/
+			if (proveedores.pertenece(datos[1])) {
+				proveedor=proveedores.codigo(datos[1]);
+			}
+			/*Obtener codigo de pelicula*/
+			if (peliculas.pertenece(datos[2])) {
+				pelicula=peliculas.codigo(datos[2]);
+			}
+			/*Juntar los 3 codigos en un string*/
+			String persona_str=Integer.toString(persona);
+			/*Adecuar el largo de cada elemento al especificado, 2 digitos para ID proveedor*/
+			String proveedor_str=Integer.toString(proveedor);
+			if(proveedor_str.length()==1){
+				proveedor_str="0"+proveedor_str;
+			}
+			/*Adecuar el largo de cada elemento al especificado, 4 digitos para ID pelicula*/
+			String pelicula_str=Integer.toString(pelicula);
+			if(pelicula_str.length()==1){
+				pelicula_str="000"+pelicula_str;
+			} else if (pelicula_str.length()==2) {
+				pelicula_str="00"+pelicula_str;
+			} else if (pelicula_str.length()==3) {
+				pelicula_str="0"+pelicula_str;
+			}
+			String codigoStr=persona_str+proveedor_str+pelicula_str;
+			/*Convertir el codigo en entero y acolar*/
+			int codigoInt=Integer.parseInt(codigoStr);
+			cola_resultado.acolar(codigoInt);
+			movimientos.desacolar();
+		}
+	}
+	
+}
