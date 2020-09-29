@@ -48,9 +48,11 @@ public class Tabla implements ITabla {
     @Override
     public boolean pertenece(String nombre) {
         Tupla tuplaActual = this.primera;
-
-        while(tuplaActual != null && tuplaActual.nombre != nombre){
-            tuplaActual = tuplaActual.siguiente;
+        String nombre_tupla = tuplaActual.nombre;
+        
+        while(tuplaActual != null && !nombre_tupla.toLowerCase().equals(nombre.toLowerCase())) {
+        	tuplaActual = tuplaActual.siguiente;
+            nombre_tupla = tuplaActual.nombre;
         }
 
         return tuplaActual != null;
@@ -59,9 +61,11 @@ public class Tabla implements ITabla {
     @Override
     public int codigo(String nombre) {
         Tupla tuplaActual = this.primera;
-
-        while (tuplaActual != null && tuplaActual.nombre != nombre) {
-            tuplaActual = tuplaActual.siguiente;
+        String nombre_tupla = tuplaActual.nombre;
+        
+        while(tuplaActual != null && !nombre_tupla.toLowerCase().equals(nombre.toLowerCase())) {
+        	tuplaActual = tuplaActual.siguiente;
+            nombre_tupla = tuplaActual.nombre;
         }
 
         return tuplaActual.codigo;
@@ -109,50 +113,31 @@ public class Tabla implements ITabla {
         String menor;
 
         while( !colaNombres.colaVacia() ) {
-
             menor = colaNombres.primero();
-
             colaNombres.desacolar();
 
             while( !colaNombres.colaVacia() ) {
-
-                int x = menor.compareToIgnoreCase( colaNombres.primero() );
-
                 if( menor.compareToIgnoreCase( colaNombres.primero() ) < 0 ) {
-
                     colaAuxiliar.acolar( colaNombres.primero() );
-
                     colaNombres.desacolar();
-
                 } else {
-
                     colaAuxiliar.acolar( menor );
-
                     menor = colaNombres.primero();
-
                     colaNombres.desacolar();
                 }
-
             }
 
             colaOrdenada.acolar(menor);
 
             while(!colaAuxiliar.colaVacia()) {
-
                 colaNombres.acolar( colaAuxiliar.primero() );
-
                 colaAuxiliar.desacolar();
-
             }
-
         }
 
         while(!colaOrdenada.colaVacia()) {
-
             colaNombres.acolar(colaOrdenada.primero());
-
             colaOrdenada.desacolar();
-
         }
 
         Tupla primera = !colaNombres.colaVacia()
@@ -169,7 +154,6 @@ public class Tabla implements ITabla {
                 actual.siguiente = null;
             }
         }
-
         this.primera = primera;
     }
 
@@ -264,20 +248,18 @@ public class Tabla implements ITabla {
     public boolean estaVacia() {
         return this.primera == null;
     }
-
+    
     /**
      *
      * @param codigo
      * @return
      */
     private Tupla codigoElemento(int codigo) {
-
         Tupla tuplaActual = this.primera;
 
         while ( tuplaActual != null && tuplaActual.codigo != codigo ) {
             tuplaActual = tuplaActual.siguiente;
         }
-
         return(tuplaActual);
     }
 
