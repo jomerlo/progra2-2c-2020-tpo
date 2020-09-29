@@ -1,0 +1,141 @@
+package misAplicaciones;
+
+import miApi.ICola;
+import miApi.IColaCadena;
+import miApi.IConjunto;
+import miApi.IDiccionarioMultiple;
+import miApi.ITabla;
+import misAlgoritmos.EntradaSalida;
+import misAlgoritmos.Helpers;
+import misImplementaciones.Cola;
+import misImplementaciones.ColaCadena;
+import misImplementaciones.Conjunto;
+import misImplementaciones.DiccionarioMultiple;
+import misImplementaciones.Tabla;
+
+public class Programa_punto5 {
+
+	public static void main(String[] args) {
+		EntradaSalida eys = new EntradaSalida();
+		Helpers Helps = new Helpers();
+
+		ITabla peliculas = new Tabla();
+		peliculas.inicializarTabla();
+		System.out.println("Se inicia la carga de las películas disponibles: ");
+		/*eys.CargarTabla(peliculas);*/
+		peliculas.agregar("Batman");
+		peliculas.agregar("Robocop");
+		peliculas.agregar("Mision Imposible");
+		peliculas.agregar ("Duro de Matar");
+		peliculas.agregar("Nueve Reinas");
+		
+		ITabla proveedores = new Tabla();
+		proveedores.inicializarTabla();
+		System.out.println("Se inicia la carga de los proveedores disponibles: ");
+		/*eys.CargarTabla(proveedores);*/
+		proveedores.agregar("youtube");
+		proveedores.agregar("netflix");
+		proveedores.agregar("Vimeo");
+		proveedores.agregar("HBO");
+
+		IColaCadena movimientos=new ColaCadena();
+		movimientos.inicializarCola();
+		System.out.println("Se inicia la carga de los movimientos: ");
+		/*eys.CargarColaCadena(movimientos);*/
+		movimientos.acolar("11;YouTube;Batman");
+		movimientos.acolar("43;Netflix;Robocop");
+		movimientos.acolar("02;Netflix;Mision Imposible");
+		movimientos.acolar("11;YouTube;Robocop");
+		movimientos.acolar("11;Vimeo;Batman");
+		movimientos.acolar("02;HBO;Duro de Matar");
+		movimientos.acolar("05;YouTube;Nueve Reinas");
+		movimientos.acolar("120;HBO;Robocop");
+		movimientos.acolar("05;Vimeo;Nueve Reinas");
+		movimientos.acolar("02;HBO;Mision Imposible");
+		movimientos.acolar("05;HBO;Nueve Reinas");
+		movimientos.acolar("05;Vimeo;Nueve Reinas");
+		
+		/*Convertir la cadena en un codigo numerico y pasarlo a una cola*/		
+		ICola colaMovimientosCodigos = new Cola();
+		colaMovimientosCodigos.inicializarCola();
+
+		Helps.tablasAcolas(colaMovimientosCodigos,movimientos,proveedores,peliculas);
+		
+		/*Generar diccionario Claves: personas, Valores: películas que pidieron*/
+		IDiccionarioMultiple diccionario_personaPelicula=new DiccionarioMultiple();
+		diccionario_personaPelicula.inicializarDiccionarioMultiple();
+		
+		/*Generar diccionario Claves: persona-pelicula, Valores: proveedores*/
+		IDiccionarioMultiple diccionario_peliculaProveedor=new DiccionarioMultiple();
+		diccionario_peliculaProveedor.inicializarDiccionarioMultiple();
+		
+		/*Llenar diccionarios*/
+		while(!colaMovimientosCodigos.colaVacia()) {
+			int codigo=colaMovimientosCodigos.primero();
+			String codigo_str=Integer.toString(codigo);
+			String persona = codigo_str.substring(0,codigo_str.length()-6);
+			String pelicula = codigo_str.substring(codigo_str.length()-4,codigo_str.length());
+			String proveedor = codigo_str.substring(codigo_str.length()-6,codigo_str.length()-4);
+			
+			if(!diccionario_personaPelicula.claves().pertenece(Integer.parseInt(persona))) {
+				diccionario_personaPelicula.agregar(Integer.parseInt(persona),Integer.parseInt(pelicula));
+			} else if (!diccionario_personaPelicula.obtener(Integer.parseInt(persona)).pertenece(Integer.parseInt(pelicula))) {
+				diccionario_personaPelicula.agregar(Integer.parseInt(persona),Integer.parseInt(pelicula));
+			}
+			
+			if(!diccionario_peliculaProveedor.claves().pertenece(Integer.parseInt(persona+pelicula))) {
+				diccionario_peliculaProveedor.agregar(Integer.parseInt(persona+pelicula),Integer.parseInt(proveedor));
+			}
+			else if(!diccionario_peliculaProveedor.obtener(Integer.parseInt(persona+pelicula)).pertenece(Integer.parseInt(proveedor))) {
+				diccionario_peliculaProveedor.agregar(Integer.parseInt(persona+pelicula),Integer.parseInt(proveedor));
+			}
+			
+			colaMovimientosCodigos.desacolar();
+		}
+		
+		IConjunto conjunto_personaPelicula = new Conjunto();
+		conjunto_personaPelicula=diccionario_personaPelicula.claves();
+
+		IConjunto valores = new Conjunto();
+		valores.inicializarConjunto();
+		
+		IColaCadena cola_resultados = new ColaCadena();
+		cola_resultados.inicializarCola();
+		
+		while(!conjunto_personaPelicula.conjuntoVacio()) {
+			int persona=conjunto_personaPelicula.obtener();			
+			valores=diccionario_personaPelicula.obtener(persona);
+			while(!valores.conjuntoVacio()) {
+				int pelicula=valores.obtener();
+				String peli=Integer.toString(pelicula);
+				if (peli.length()==1) {
+					peli="000"+peli;
+				} else if (peli.length()==2) {
+					peli="00"+peli;
+				} else if (peli.length()==3) {
+					peli="0"+peli;
+				}
+				String peliPer = Integer.toString(persona)+peli;
+				
+				IConjunto proves=new Conjunto();
+				proves=diccionario_peliculaProveedor.obtener(Integer.parseInt(peliPer));
+				
+				String proves_str="";
+				while(!proves.conjuntoVacio()) {
+					int proveedor=proves.obtener();
+					proves_str=proves_str+Integer.toString(proveedor);
+					proves.sacar(proveedor);
+					if(!proves.conjuntoVacio()) {
+						proves_str=proves_str+",";
+					}
+				}
+				if(proves_str.length()>2) {
+					cola_resultados.acolar(peliPer+"("+proves_str+")");
+				}
+				valores.sacar(pelicula);
+			}
+			conjunto_personaPelicula.sacar(persona);
+		}
+		eys.MostrarColaCadenaPunto5(cola_resultados);
+	}
+}
