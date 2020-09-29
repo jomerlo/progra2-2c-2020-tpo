@@ -1,0 +1,120 @@
+package misAlgoritmos;
+
+import java.util.Scanner;
+
+import miApi.ICola;
+import miApi.IColaCadena;
+import miApi.IPila;
+import miApi.ITabla;
+
+
+public class EntradaSalida {
+
+	/*Tarea: MostrarPila muestra una pila
+	 * Precondición: La pila debe existir y no debe estar vacía.
+	 * Costo temporal: constante.
+	 * Costo espacial: 	0
+	 */
+	public void MostrarPila(IPila pila) {
+		while(!pila.pilaVacia()) {
+			System.out.println(pila.tope());
+			pila.desapilar();
+		}
+	}
+	
+	/*Tarea: MostrarCola muestra una cola
+	 * Precondición: La cola debe existir y no debe estar vacía.
+	 * Costo temporal: constante.
+	 * Costo espacial: 	0
+	 */
+	public void MostrarCola(ICola cola) {
+		while(!cola.colaVacia()) {
+			System.out.println(cola.primero());
+			cola.desacolar();
+		}
+	}
+	
+	/*Tarea: MostrarColaCadena muestra una cola de cadenas
+	 * Precondición: La cola debe existir y no debe estar vacía.
+	 * Costo temporal: constante.
+	 * Costo espacial: 	0
+	 */
+	public void MostrarColaCadena(IColaCadena cola) {
+		while(!cola.colaVacia()) {
+			System.out.println(cola.primero());
+			cola.desacolar();
+		}
+	}
+	
+	/*Tarea: CargarTabla carga una tabla.
+	 * Precondición: La tabla debe existir.
+	 * Costo temporal: constante.
+	 * Costo espacial: 	0
+	 */
+	public void CargarTabla(ITabla tabla) {
+		Scanner teclado = new Scanner(System.in);
+		System.out.print("Ingrese un nombre: ");
+		String nombre=teclado.nextLine();	
+
+		while(nombre.equals("") == false) {
+			tabla.agregar(nombre);
+			System.out.print("Ingrese un nombre: ");
+			nombre=teclado.nextLine();		
+		}
+	}
+	
+	/*Tarea: CargarColaCadena carga una serie de cadenas en una cola.
+	 * Precondición: La cola debe existir.
+	 * Costo temporal: constante.
+	 * Costo espacial: 	0
+	 */
+	public void CargarColaCadena(IColaCadena cola) {
+		Scanner teclado = new Scanner(System.in);
+		String movimiento;
+		System.out.print("Ingrese el movimiento ingresando primero ID de persona, luego el nombre de la película, y por último el proveedor, separados por ; (pulse enter para terminar): ");
+		movimiento = teclado.nextLine();
+		
+		while(movimiento.equals("") == false) {
+			cola.acolar(movimiento);
+			System.out.print("Ingrese el movimiento ingresando primero ID de persona, luego el nombre de la película, y por último el proveedor, separados por ; (pulse enter para terminar): ");
+			movimiento = teclado.nextLine();		
+		}
+	}
+	
+	public void MostrarPilaOrdenado(IPila pila,int cant_elem) {
+		int i=0;
+		System.out.println("Persona Proveedor Pelicula");
+		while(!pila.pilaVacia() && i<cant_elem) {	
+			int mov=pila.tope();
+			String mov_str=Integer.toString(mov);
+			String add_persona = "";
+			if(mov_str.length()==7) {
+				add_persona="00";
+			} else if(mov_str.length()==8) {
+				add_persona="0";
+			}
+			System.out.print("  "+add_persona+mov_str.substring(0,mov_str.length()-6)+"      ");
+			System.out.print(mov_str.substring(mov_str.length()-6,mov_str.length()-4)+"       ");
+			System.out.print(mov_str.substring(mov_str.length()-4)+"");
+			System.out.println();
+			pila.desapilar();
+			i++;
+		}
+	}
+	
+	public void MostrarColaCadenaPunto5(IColaCadena cola) {
+		System.out.println("Persona  Pelicula(Proveedores)");
+		while(!cola.colaVacia()) {	
+			String mov_str=cola.primero();
+			int parentesis=mov_str.indexOf("(");
+			if (mov_str.substring(0,parentesis-4).length()==1) {
+				mov_str="   00"+mov_str.substring(0,parentesis-4)+"       "+mov_str.substring(parentesis-4,mov_str.length());
+			} else if (mov_str.substring(0,parentesis-4).length()==2) {
+				mov_str="   0"+mov_str.substring(0,parentesis-4)+"       "+mov_str.substring(parentesis-4,mov_str.length());
+			}
+			
+			System.out.println(mov_str);
+			cola.desacolar();
+		}
+	}
+}
