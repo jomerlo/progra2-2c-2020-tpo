@@ -1,0 +1,70 @@
+package misAplicaciones;
+
+import miApi.ICola;
+import miApi.IColaCadena;
+import miApi.IPila;
+import miApi.ITabla;
+import misAlgoritmos.EntradaSalida;
+/*import misAlgoritmos.EntradaSalida;*/
+import misAlgoritmos.Helpers;
+import misImplementaciones.Cola;
+import misImplementaciones.ColaCadena;
+import misImplementaciones.Pila;
+import misImplementaciones.Tabla;
+
+public class Programa_Punto1 {
+	
+	public static void main(String[] args) {		
+		EntradaSalida eys = new EntradaSalida();
+		Helpers Helps = new Helpers();
+
+		ITabla peliculas = new Tabla();
+		peliculas.inicializarTabla();
+		System.out.println("Se inicia la carga de las películas disponibles: ");
+		/*eys.CargarTabla(peliculas);*/
+		peliculas.agregar("Batman");
+		peliculas.agregar("Robocop");
+		peliculas.agregar("Mision Imposible");
+		peliculas.agregar ("Duro de Matar");
+		peliculas.agregar("Nueve Reinas");
+		
+		ITabla proveedores = new Tabla();
+		proveedores.inicializarTabla();
+		System.out.println("Se inicia la carga de los proveedores disponibles: ");
+		/*eys.CargarTabla(proveedores);*/
+		proveedores.agregar("youtube");
+		proveedores.agregar("netflix");
+		proveedores.agregar("Vimeo");
+		proveedores.agregar("HBO");
+
+		IColaCadena movimientos=new ColaCadena();
+		movimientos.inicializarCola();
+		System.out.println("Se inicia la carga de los movimientos: ");
+		/*eys.CargarColaCadena(movimientos);*/
+		movimientos.acolar("11;YouTube;Batman");
+		movimientos.acolar("43;Netflix;Robocop");
+		movimientos.acolar("02;Netflix;Mision Imposible");
+		movimientos.acolar("11;YouTube;Robocop");
+		movimientos.acolar("11;Vimeo;Batman");
+		movimientos.acolar("02;HBO;Duro de Matar");
+		movimientos.acolar("05;Vimeo;Nueve Reinas");
+		movimientos.acolar("120;HBO;Robocop");
+		movimientos.acolar("05;Vimeo;Nueve Reinas");
+		movimientos.acolar("80;HBO;Batman");
+		movimientos.acolar("12;HBO;Nueve Reinas");
+		movimientos.acolar("05;Vimeo;Nueve Reinas");
+
+		/*Convertir la cadena en un codigo numerico y pasarlo a una cola*/		
+		ICola colaMovimientosCodigos = new Cola();
+		colaMovimientosCodigos.inicializarCola();
+				
+		/*Copiar la cola de movimientos en codigo a una pila para que los 10 primeros en salir sean los mas recientes*/
+		IPila pilaMovimientosCodigos = new Pila();
+		pilaMovimientosCodigos.inicializarPila();
+		
+		Helpers help = new Helpers();
+		help.ColaPila(colaMovimientosCodigos,pilaMovimientosCodigos);
+		
+		eys.MostrarPilaOrdenado(pilaMovimientosCodigos,10);
+		}
+}
