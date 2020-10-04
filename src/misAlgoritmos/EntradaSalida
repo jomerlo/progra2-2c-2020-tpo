@@ -1,0 +1,228 @@
+package misAlgoritmos;
+/** @authors Grupo6: Ignacio Fontana, Fabian Gomes, Joaquin Merlo, Leonardo Pardo*/
+
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.Reader;
+import java.util.Scanner;
+
+import miApi.ICola;
+import miApi.IColaCadena;
+import miApi.IColaPrioritaria;
+import miApi.IDiccionarioSimple;
+import miApi.IPila;
+import miApi.ITabla;
+import misImplementaciones.DiccionarioSimple;
+import misImplementaciones.Tabla;
+
+
+public class EntradaSalida {
+
+	/*Tarea: MostrarPila muestra una pila
+	 * Precondición: La pila debe existir y no debe estar vacía.
+	 * Costo temporal: constante.
+	 * Costo espacial: 	0
+	 */
+	public void MostrarPila(IPila pila) {
+		while(!pila.pilaVacia()) {
+			System.out.println(pila.tope());
+			pila.desapilar();
+		}
+	}
+	
+	/*Tarea: MostrarCola muestra una cola
+	 * Precondición: La cola debe existir y no debe estar vacía.
+	 * Costo temporal: constante.
+	 * Costo espacial: 	0
+	 */
+	public void MostrarCola(ICola cola) {
+		while(!cola.colaVacia()) {
+			System.out.println(cola.primero());
+			cola.desacolar();
+		}
+	}
+	
+	/*Tarea: MostrarCola muestra una cola
+	 * Precondición: La cola debe existir y no debe estar vacía.
+	 * Costo temporal: constante.
+	 * Costo espacial: 	0
+	 */
+	public void MostrarColaPrioridad(IColaPrioritaria cola,int n) {
+		int i=0;
+		while(!cola.colaVacia() && i<n) {
+			System.out.println(Integer.toString(cola.primero())+"("+Integer.toString(cola.prioridad())+")");
+			cola.desacolar();
+			i++;
+		}
+	}
+	
+	/*Tarea: MostrarColaCadena muestra una cola de cadenas
+	 * Precondición: La cola debe existir y no debe estar vacía.
+	 * Costo temporal: constante.
+	 * Costo espacial: 	0
+	 */
+	public void MostrarColaCadena(IColaCadena cola) {
+		while(!cola.colaVacia()) {
+			System.out.println(cola.primero());
+			cola.desacolar();
+		}
+	}
+	
+	/*Tarea: CargarTabla carga una tabla.
+	 * Precondición: La tabla debe existir.
+	 * Costo temporal: constante.
+	 * Costo espacial: 	0
+	 */
+	public void CargarTabla(String archivo,ITabla tabla_resultado) {
+		try {
+			FileReader arch = new FileReader (archivo);
+			BufferedReader buffer = new BufferedReader (arch);
+			String linea;
+			
+			buffer.readLine();
+			linea=buffer.readLine();
+			
+			while(linea != null ) {
+				tabla_resultado.agregar(linea);
+				linea=buffer.readLine();
+			}
+			System.out.println("Tabla cargada con éxito");
+			arch.close();
+		}
+		
+		catch(Exception e) {
+			System.out.println("Error de lectura. Arch : "+ archivo + ": " + e);
+		}
+	}
+	
+	/*Tarea: CargarColaCadena carga una serie de cadenas en una cola.
+	 * Precondición: La cola debe existir.
+	 * Costo temporal: constante.
+	 * Costo espacial: 	0
+	 */
+	public void CargarColaCadena(IColaCadena cola) {
+		Scanner teclado = new Scanner(System.in);
+		String movimiento;
+		System.out.print("Ingrese el movimiento ingresando primero ID de persona, luego el nombre de la película, y por último el proveedor, separados por ; (pulse enter para terminar): ");
+		movimiento = teclado.nextLine();
+		
+		while(movimiento.equals("") == false) {
+			cola.acolar(movimiento);
+			System.out.print("Ingrese el movimiento ingresando primero ID de persona, luego el nombre de la película, y por último el proveedor, separados por ; (pulse enter para terminar): ");
+			movimiento = teclado.nextLine();		
+		}
+	}
+	
+	/*Tarea: MostrarPilaInteresOrdenada muestra N elementos de interes de una 
+	 * pila, sila cantidad de elementos es menor a n, muestra todo. Se muestra
+	 * en una lista correspondiente al punto 1.
+	 * Precondición: La pila debe existir y no debe estar vacía.
+	 * Costo temporal: constante.
+	 * Costo espacial: 	0
+	 */
+	public void MostrarPilaInteres(IPila pila,int n) {
+		int i;
+		i=0;
+		System.out.println("Persona Proveedor Pelicula");
+		while(!pila.pilaVacia() && i<n) {
+			int valor=pila.tope();
+			int pelicula=valor%10000;
+			valor=valor/10000;
+			int proveedor=valor%100;
+			int ID=valor/100;
+			System.out.println(Integer.toString(ID)+"     "+Integer.toString(proveedor)+"      "+Integer.toString(pelicula));
+			pila.desapilar();
+			i++;
+		}
+	}
+
+	public void MostrarColaCadenaPunto5(IColaCadena cola) {
+		System.out.println("Persona  Pelicula(Proveedores)");
+		while(!cola.colaVacia()) {	
+			String mov_str=cola.primero();
+			int parentesis=mov_str.indexOf("(");
+			if (mov_str.substring(0,parentesis-4).length()==1) {
+				mov_str="   00"+mov_str.substring(0,parentesis-4)+"       "+mov_str.substring(parentesis-4,mov_str.length());
+			} else if (mov_str.substring(0,parentesis-4).length()==2) {
+				mov_str="   0"+mov_str.substring(0,parentesis-4)+"       "+mov_str.substring(parentesis-4,mov_str.length());
+			}
+			
+			System.out.println(mov_str);
+			cola.desacolar();
+		}
+	}
+	
+	public void cargarMovimientos (String archivo,ICola cola,ITabla proveedores,ITabla peliculas) {
+		try {
+			FileReader arch = new FileReader (archivo);
+			BufferedReader buffer = new BufferedReader (arch);
+			int id, valor;
+			String linea, nombreProveedor, nombrePelicula;
+			
+			buffer.readLine();
+			linea=buffer.readLine();
+			
+			while(linea != null ) {
+				String[] lista = linea.split("; ");
+				id=Integer.valueOf(lista[0]);
+				nombreProveedor=lista[2];
+				nombrePelicula=lista[1];
+				if(proveedores.pertenece(nombreProveedor) && peliculas.pertenece(nombrePelicula)) {
+					valor=id*1000000+proveedores.codigo(nombreProveedor)*10000+peliculas.codigo(nombrePelicula);
+					cola.acolar(valor);
+				}
+				linea=buffer.readLine();
+			}
+			System.out.println("Movimientos cargados con éxito");
+			arch.close();
+		}
+		
+		catch(Exception e) {
+				System.out.println("Error de lectura. Arch : "+ archivo + ": " + e);
+		}
+	}
+
+	public IDiccionarioSimple contarPersonas(String archivo) {
+		IDiccionarioSimple dic_resultado=new DiccionarioSimple();
+		dic_resultado.inicializarDiccionarioSimple();
+		
+		try {
+			FileReader arch = new FileReader (archivo);
+			BufferedReader buffer = new BufferedReader (arch);
+			int id,aux;
+			String linea;
+			
+			buffer.readLine();
+			linea=buffer.readLine();
+			
+			while(linea != null ) {
+				String[] lista = linea.split("; ");
+				id=Integer.valueOf(lista[0]);
+				
+				if(!dic_resultado.claves().pertenece(id)) {
+					dic_resultado.agregar(id,1);
+				} else {
+					aux=dic_resultado.obtener(id);
+					aux++;
+					dic_resultado.agregar(id,aux);
+				}
+				linea=buffer.readLine();
+			}
+			System.out.println("Movimientos cargados con éxito");
+			arch.close();
+		}
+		catch(Exception e) {
+					System.out.println("Error de lectura. Arch : "+ archivo + ": " + e);
+			}
+		return (dic_resultado);
+	}
+	
+}
+
+
+
+
+
+
+
+
