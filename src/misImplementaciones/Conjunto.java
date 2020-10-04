@@ -27,20 +27,18 @@ public class Conjunto implements IConjunto {
 
     @Override
     public void sacar(int x) {
-        Nodo nodoAnterior = null;
-        Nodo nodoActual = this.primero;
-
-        if(nodoActual.dato == x){
-            this.primero = nodoActual.siguiente;
-            return;
+    	
+        if(primero.dato == x){
+            primero = primero.siguiente;
+        } else {
+        	Nodo aux=primero;
+        	while(aux.siguiente!=null && aux.siguiente.dato!=x){
+        		aux=aux.siguiente;
+        	}
+        	if (aux.siguiente!=null) {
+        		aux.siguiente=aux.siguiente.siguiente;
         }
-
-        while(nodoActual.dato != x){
-            nodoAnterior = nodoActual;
-            nodoActual = nodoActual.siguiente;
-        }
-
-        nodoAnterior.siguiente = nodoActual.siguiente;
+      }
     }
 
     @Override
